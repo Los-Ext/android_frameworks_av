@@ -55,9 +55,39 @@ bool isCriterionMatched(const AudioMixMatchCriterion& criterion,
         case RULE_MATCH_ATTRIBUTE_CAPTURE_PRESET:
             return criterion.mValue.mSource == attr.source;
         case RULE_MATCH_UID:
-            return criterion.mValue.mUid == uid;
+            {
+                if (uid == 0) {
+                    // WA until delivery of feature multi_zone_audio (b/316643994)
+                    // When the AudioPolicyManager checks the applicable device for audio attributes
+                    // it considers in prior the dynamic policy mixes installed.
+                    // If one is matching, the device returned is the registered one for this rule.
+                    // For volume request, the Uid/UserId is unknown, thus the request of matching
+                    // mixes is done with UID=0.
+                    // If there is a matching / exclusion rule on UID, it reports a false negative
+                    // (for matching rule) or false positive (for exclusion rule).
+                    // WA: There is a matching rule on the UID and UID=0 is provided by the caller
+                    //     -Exclusion criterion shall answer true in order not to validate
+                    //     -Matching shall answer false
+                    return criterion.isExcludeCriterion();
+                }
+                return criterion.mValue.mUid == uid;
+            }
         case RULE_MATCH_USERID:
             {
+                if (uid == 0) {
+                    // WA until delivery of feature multi_zone_audio (b/316643994)
+                    // When the AudioPolicyManager checks the applicable device for audio attributes
+                    // it considers in prior the dynamic policy mixes installed.
+                    // If one is matching, the device returned is the registered one for this rule.
+                    // For volume request, the Uid/UserId is unknown, thus the request of matching
+                    // mixes is done with UID=0.
+                    // If there is a matching / exclusion rule on UID, it reports a false negative
+                    // (for matching rule) or false positive (for exclusion rule).
+                    // WA: There is a matching rule on the UID and UID=0 is provided by the caller
+                    //     -Exclusion criterion shall answer true in order not to validate
+                    //     -Matching shall answer false
+                    return criterion.isExcludeCriterion();
+                }
                 userid_t userId = multiuser_get_user_id(uid);
                 return criterion.mValue.mUserId == userId;
             }
