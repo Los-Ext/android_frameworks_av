@@ -3317,7 +3317,11 @@ status_t AudioPolicyManager::setVolumeIndexForAttributes(const audio_attributes_
     auto curCurvAttrs = curves.getAttributes();
     if (!curCurvAttrs.empty() && curCurvAttrs.front() != defaultAttr) {
         auto attr = curCurvAttrs.front();
-        curSrcDevices = mEngine->getOutputDevicesForAttributes(attr, nullptr, false).types();
+        // called is expected to request getDevicesForAttributes in prior of setVolumes
+        // Shall not use engine device to prevent bypassing mixes (expect loopback)
+        DeviceVector devices;
+        getDevicesForAttributes(attr, devices, /* forVolume */ true);
+        curSrcDevices = devices.types();
     } else if (!curves.getStreamTypes().empty()) {
         auto stream = curves.getStreamTypes().front();
         curSrcDevices = mEngine->getOutputDevicesForStream(stream, false).types();
