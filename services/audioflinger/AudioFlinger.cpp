@@ -4054,13 +4054,7 @@ status_t AudioFlinger::createEffect(const media::CreateEffectRequest& request,
     }
 
     // check audio settings permission for global effects
-    if (sessionId == AUDIO_SESSION_OUTPUT_MIX) {
-        if (!settingsAllowed()) {
-            ALOGE("%s: no permission for AUDIO_SESSION_OUTPUT_MIX", __func__);
-            lStatus = PERMISSION_DENIED;
-            goto Exit;
-        }
-    } else if (sessionId == AUDIO_SESSION_OUTPUT_STAGE) {
+    if (sessionId == AUDIO_SESSION_OUTPUT_STAGE) {
         if (io == AUDIO_IO_HANDLE_NONE) {
             ALOGE("%s: APM must specify output when using AUDIO_SESSION_OUTPUT_STAGE", __func__);
             lStatus = BAD_VALUE;
@@ -4097,7 +4091,8 @@ status_t AudioFlinger::createEffect(const media::CreateEffectRequest& request,
     } else {
         // general sessionId.
 
-        if (audio_unique_id_get_use(sessionId) != AUDIO_UNIQUE_ID_USE_SESSION) {
+        if (audio_unique_id_get_use(sessionId) != AUDIO_UNIQUE_ID_USE_SESSION 
+            && sessionId != AUDIO_SESSION_OUTPUT_MIX) {
             ALOGE("%s: invalid sessionId %d", __func__, sessionId);
             lStatus = BAD_VALUE;
             goto Exit;
