@@ -1692,7 +1692,7 @@ sp<IAfEffectHandle> ThreadBase::createEffect_l(
             // TODO(b/184194057): Use the vibrator information from the vibrator that will be used
             // for the HapticGenerator.
             const std::optional<media::AudioVibratorInfo> defaultVibratorInfo =
-                    std::move(mAfThreadCallback->getDefaultVibratorInfo_l());
+                    mAfThreadCallback->getDefaultVibratorInfo_l();
             if (defaultVibratorInfo) {
                 // Only set the vibrator info when it is a valid one.
                 effect->setVibratorInfo_l(*defaultVibratorInfo);
@@ -2946,7 +2946,7 @@ status_t PlaybackThread::addTrack_l(const sp<IAfTrack>& track)
                 // TODO(b/184194780): Use the vibrator information from the vibrator that will be
                 // used to play this track.
                  audio_utils::lock_guard _l(mAfThreadCallback->mutex());
-                vibratorInfo = std::move(mAfThreadCallback->getDefaultVibratorInfo_l());
+                vibratorInfo = mAfThreadCallback->getDefaultVibratorInfo_l();
             }
             mutex().lock();
             track->setHapticScale(hapticScale);

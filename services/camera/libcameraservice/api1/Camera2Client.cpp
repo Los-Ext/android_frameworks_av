@@ -419,7 +419,7 @@ status_t Camera2Client::dumpClient(int fd, const Vector<String16>& args) {
         result << "    none\n";
     }
 
-    std::string resultStr = std::move(result.str());
+    std::string resultStr = result.str();
 
     write(fd, resultStr.c_str(), resultStr.size());
 
