@@ -76,6 +76,9 @@ cc_binary {
     ] + select(soong_config_variable("camera", "package_name"), {
         any @ flag_val: ["-DCAMERA_PACKAGE_NAME=\"" + flag_val + "\""],
         default: [],
+    }) + select(soong_config_variable("camera", "uses_miui_camera"), {
+        any @ flag_val: ["-DUSES_MIUI_CAMERA=\"" + flag_val + "\""],
+        default: [],
     }),
 
     init_rc: ["cameraserver.rc"],
