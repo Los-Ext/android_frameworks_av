@@ -3082,6 +3082,9 @@ void CameraProviderManager::ProviderInfo::torchModeStatusChangeInternal(
         std::lock_guard<std::mutex> lock(mLock);
         for (auto& deviceInfo : mDevices) {
             if (deviceInfo->mName == cameraDeviceName) {
+                if (!deviceInfo->hasFlashUnit()) {
+                    return;
+                }
                 ALOGI("Camera device %s torch status is now %s", cameraDeviceName.c_str(),
                         FrameworkTorchStatusToString(newStatus));
                 id = deviceInfo->mId;
